@@ -3,14 +3,14 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 
 
-// import { createConnection } from "typeorm";
+//import { createConnection } from "typeorm";
 //import { User } from "./entity/User";
 
 
 
 (async () => {// async and await code. logic to start server
     const app = express();
-    app.get(`/`, (_reg, response) => response.send('hello'))
+    app.get(`/`, (_request, response) => response.send('hello'))
 
     const apolloServer = new ApolloServer({//grapghql define graph ql schema
         typeDefs: `
@@ -25,9 +25,9 @@ import { ApolloServer } from 'apollo-server-express';
         }
     })
     //lastly add 
-    apolloServer.applyMiddleware({ app });//added grapgh ql to the app
+    apolloServer.applyMiddleware({ app });//added grapgh ql to the app/ server 
     app.listen(4000, () => {
-        console.log('server has started')
+        console.log(`server has started http://localhost:4000/graphql`)
     });
 })();
 
