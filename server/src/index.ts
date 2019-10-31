@@ -11,8 +11,11 @@ import { createConnection } from "typeorm";
 
 
 
-(async () => {// async and await code. logic to start server
+const main = async () => {// async and await code. logic to start server
+
+    // Create Express Web Server
     const app = express();
+
     app.get(`/`, (_request, response) => response.send('hello'))
 
     await createConnection();// creates connection to entity database connection
@@ -22,12 +25,14 @@ import { createConnection } from "typeorm";
            resolvers: [UserResolver]//array of resolvers
        }) 
     });
-    //lastly add 
+     // Create GraphQL Server
     apolloServer.applyMiddleware({ app });//added grapgh ql to the app/ server 
+
     app.listen(4000, () => {
         console.log(`server has started http://localhost:4000/graphql`)
     });
-})();
+}
+main();
 
 // createConnection().then(async connection => {
 
