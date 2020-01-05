@@ -1,7 +1,8 @@
-import { Resolver, Query, Mutation, Arg, ObjectType, Field } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, ObjectType, Field, Ctx } from 'type-graphql';
 import { hash, compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
 import { User } from './entity/User';
+import { MyContext } from './MyContext';
+import { CreateRefreshToken, CreateAccessToken } from './auth';
 
 //can query accesstokens to test
 @ObjectType()
@@ -38,7 +39,7 @@ export class UserResolver {// graphql schema goes in here
       console.log(error)
       return false
     }
-    return true; // it word
+    return true; // it works
   }
 
   //login mutation/resolver
@@ -46,6 +47,7 @@ export class UserResolver {// graphql schema goes in here
   async login(
     @Arg('email') email: string,// name of gql schema and type arguments
     @Arg('password') password: string,
+    @Ctx() {res}: MyContext//imports type
   ): Promise<LoginResponse> {// once user logins access token is generated
     const user = await User.findOne({ where: { email } });// search to see if email matches email
     //if no user
@@ -61,9 +63,16 @@ export class UserResolver {// graphql schema goes in here
       throw new Error('invalid user or password')
     }
     //sucessful login
+    res.cookie('sammy-sam',//cookie and refresh token
+      CreateRefreshToken(user),
+      {
+        //going to add domain later
+        httpOnly: true //so it can not be accesed with javascript
+      }
+    )
     //generates acess token 
     return {
-      accessToken: sign({userId: user.id}, 'retgasutkalw', {expiresIn: '15m'})
+      accessToken: CreateAccessToken(user)
     }
   }
 }

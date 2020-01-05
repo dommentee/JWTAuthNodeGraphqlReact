@@ -16,14 +16,15 @@ const main = async () => {// async and await code. logic to start server
     // Create Express Web Server
     const app = express();
 
-    app.get(`/`, (_request, response) => response.send('hello'))
+    app.get(`/`, (_req, res) => res.send('hello'))
 
     await createConnection();// creates connection to entity database connection
 
     const apolloServer = new ApolloServer({//grapghql define graph ql schema
         schema: await buildSchema({//build schema  takes our resolvers and creates gql schema await cus async function
            resolvers: [UserResolver]//array of resolvers
-       }) 
+        }),
+        context: ({req, res}) => ({req, res})// context of app can now be accessed through resolvers
     });
      // Create GraphQL Server
     apolloServer.applyMiddleware({ app });//added grapgh ql to the app/ server 
